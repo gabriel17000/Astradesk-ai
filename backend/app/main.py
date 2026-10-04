@@ -9,7 +9,7 @@ from app.schemas.api import HealthOut
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="AstraDesk AI", version="1.0.0", description="Transforme documentos em conhecimento.")
+app = FastAPI(title="Servix Knowledge API", version="1.0.0", description="Base de conhecimento e consultas assistidas do Servix.")
 app.add_middleware(CORSMiddleware, allow_origins=[origin.strip() for origin in settings.cors_origins.split(",")], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 app.include_router(documents.router)
 app.include_router(chat.router)

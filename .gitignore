@@ -33,3 +33,4 @@ Thumbs.db
 
 # Separate local checkout of AstraDesk AI
 /astradesk-ai/
+.vercel

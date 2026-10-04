@@ -3,12 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f6f7f9" />
-    <meta name="description" content="Encontre profissionais avaliados, solicite serviços e acompanhe cada etapa com a AstraDesk." />
-    <title>AstraDesk — serviços para o seu dia a dia</title>
+    <meta name="theme-color" content="#080910" />
+    <meta name="description" content="Servix — todos os seus clientes, atendimentos e processos em um só lugar. Serviços. Conexões. Confiança." />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" type="image/svg+xml" href="/brand/servix-mark.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Servix — Serviços. Conexões. Confiança.</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>if ('serviceWorker' in navigator && location.protocol !== 'file:') addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));</script>
   </body>
 </html>

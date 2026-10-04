@@ -1,149 +1,75 @@
-# AstraDesk
+# Servix
 
-Este repositório contém duas aplicações independentes chamadas AstraDesk:
+Servix é uma plataforma de atendimento e relacionamento com clientes. Esta etapa evolui o frontend React existente para um painel SaaS com dashboard, caixa de entrada, clientes, base de conhecimento, equipe, métricas e configurações.
 
-- **Marketplace de serviços** na raiz: protótipo frontend para encontrar profissionais, solicitar serviços e acompanhar atendimentos.
-- **AstraDesk AI** em `frontend/` e `backend/`: aplicação full-stack para consultar documentos com respostas rastreáveis.
+## Aplicação principal
 
-As aplicações têm dependências, comandos de execução e escopos separados.
+A aplicação servida pela raiz do repositório usa React 18, Vite, JavaScript e Lucide. A interface e o design system ficam em `src/servix/`; o pacote da marca fornecido está em `public/brand/`.
 
-## Marketplace AstraDesk
-
-Protótipo navegável de um marketplace de serviços residenciais. Usa dados fictícios e estado local no navegador; não possui backend, autenticação ou pagamentos reais.
-
-### Executar
-
-Requisitos: Node.js 18 ou superior.
-
-```bash
+```powershell
 npm install
 npm run dev
 ```
 
-Para gerar e pré-visualizar a versão de produção:
+O Vite serve a aplicação em `http://localhost:5173`. Para compilar e pré-visualizar a versão de produção:
 
-```bash
+```powershell
 npm run build
 npm run preview
 ```
 
-### Fluxos da demonstração
+As conversas, clientes, usuários e indicadores do MVP usam dados demonstrativos em memória. As alterações nessas áreas não são persistidas após atualizar a página.
 
-- Buscar serviços por texto, categoria, faixa de preço e avaliação mínima; ordenar resultados.
-- Consultar profissionais, especialidades, disponibilidade, avaliações e serviços oferecidos.
-- Escolher um horário disponível, revisar os dados e enviar uma solicitação.
-- Acompanhar pedidos solicitados, aceitos, agendados, em andamento e concluídos.
-- Conversar com o profissional e receber uma resposta automática simulada.
-- Avaliar serviços concluídos e editar o perfil local do cliente.
+## API de conhecimento
 
-Pedidos, mensagens, notificações, avaliações e perfil são guardados no `localStorage`. Para reiniciar a demonstração, remova a chave `astradesk-demo-v1` do armazenamento local do site.
+`backend/` contém o backend FastAPI existente. Ele oferece upload e consulta de documentos `.txt` e `.md`, recuperação de trechos e respostas com citação da fonte. Sem `OPENAI_API_KEY`, a API sinaliza o modo de demonstração; com uma chave configurada no ambiente do backend, usa o provedor OpenAI.
 
-O avanço de status e as respostas do chat são simulações para apresentação. Perfis, avaliações, disponibilidade e selos são dados ilustrativos; nenhum serviço, identidade ou pagamento é verificado ou processado de verdade.
-
-### Estrutura do marketplace
-
-```text
-src/
-├── components/   # Shell e componentes compartilhados da interface
-├── context/      # Estado local e ações mockadas do produto
-├── data/         # Profissionais, serviços e pedidos fictícios
-├── layouts/      # Layout principal da aplicação
-└── pages/        # Busca, profissionais, pedidos, chat e perfil
-```
-
-## AstraDesk AI
-
-Aplicação full-stack para organizar arquivos de texto e fazer perguntas sobre seu conteúdo. As respostas informam as fontes utilizadas. A busca lexical usa SQLite e a geração de respostas com IA é opcional.
-
-### Funcionalidades
-
-- Dashboard com visão de documentos, perguntas e atividade recente.
-- Upload e exclusão de arquivos `.txt` e `.md`, com limite padrão de 5 MB.
-- Processamento de documentos em trechos com sobreposição para recuperar conteúdo relevante.
-- Chat com histórico de sessão e referência ao documento-fonte.
-- Modo demonstração sem chave de IA e histórico das últimas 50 perguntas em SQLite.
-- Interface responsiva em português.
-
-### Tecnologias
-
-| Camada | Tecnologias |
-| --- | --- |
-| Frontend | React, TypeScript, Vite, Tailwind CSS e Lucide |
-| Backend | Python 3.12+, FastAPI, Pydantic, SQLAlchemy e Uvicorn |
-| Dados | SQLite |
-| IA opcional | API OpenAI via variável de ambiente |
-
-### Executar localmente
-
-Requisitos: Python 3.12 ou superior e Node.js 18 ou superior.
-
-Backend, em um terminal:
-
-```bash
+```powershell
 cd backend
 python -m venv .venv
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# macOS/Linux: source .venv/bin/activate
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-copy .env.example .env   # macOS/Linux: cp .env.example .env
+Copy-Item .env.example .env
 uvicorn app.main:app --reload
 ```
 
-A API estará em `http://localhost:8000` e a documentação interativa em `http://localhost:8000/docs`. Sem `OPENAI_API_KEY`, inicia em modo demonstração.
+A API fica em `http://localhost:8000`; a documentação interativa em `/docs`. Configure `VITE_API_URL` no frontend apenas se o endereço padrão `http://localhost:8000/api` mudar. A rota de conhecimento integrada à aplicação principal requer a API em execução.
 
-Frontend, em outro terminal:
+O backend ainda não oferece autenticação, CRM, gestão de usuários nem isolamento multiempresa. As tabelas atuais de documentos e perguntas não têm `organization_id`; não use esses dados como armazenamento de produção multi-tenant sem antes implementar autorização e isolamento por organização.
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Abra `http://localhost:5173`. Por padrão, o cliente usa `http://localhost:8000/api`. Para alterar essa URL, crie `frontend/.env.local` com `VITE_API_URL=http://localhost:8000/api`.
-
-Para executar os testes do backend, com o ambiente virtual ativo:
-
-```bash
-cd backend
-pytest
-```
-
-### Variáveis de ambiente
-
-Copie `backend/.env.example` para `backend/.env`. Arquivos de ambiente locais não são versionados.
-
-| Variável | Padrão | Finalidade |
-| --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///./astradesk.db` | URL de conexão do SQLAlchemy |
-| `OPENAI_API_KEY` | vazio | Habilita respostas com IA; mantenha somente no ambiente local |
-| `OPENAI_MODEL` | `gpt-4o-mini` | Modelo usado pelo serviço de IA |
-| `MAX_UPLOAD_MB` | `5` | Tamanho máximo de upload |
-| `CORS_ORIGINS` | `http://localhost:5173` | Origens permitidas, separadas por vírgula |
-
-### Estrutura do AstraDesk AI
+## Estrutura do repositório
 
 ```text
-backend/
-├── app/
-│   ├── models/       # Entidades e relacionamentos
-│   ├── routers/      # Endpoints REST
-│   ├── schemas/      # Contratos de API
-│   ├── services/     # Documentos, recuperação e IA
-│   ├── config.py
-│   ├── database.py
-│   └── main.py
-├── tests/
-└── requirements.txt
-frontend/
-├── src/
-│   ├── services/     # Cliente HTTP
-│   ├── types/        # Tipos da API
-│   ├── App.tsx
-│   └── styles.css
-└── package.json
+src/
+├── servix/
+│   ├── components/  # Componentes visuais compartilhados
+│   ├── pages/       # Telas do MVP
+│   ├── services/    # Cliente da API de conhecimento
+│   ├── data.js      # Dados demonstrativos
+│   ├── ServixApp.jsx
+│   └── styles.css   # Tokens do tema, componentes e layouts responsivos
+├── pages/           # Telas do marketplace anterior, preservadas para referência
+└── context/         # Estado demonstrativo anterior
+backend/             # FastAPI, SQLite, documentos e consultas
+frontend/            # Protótipo TypeScript de conhecimento anterior, independente
+public/brand/        # Guia rasterizado original e ícone derivado por recorte
 ```
 
-O frontend React consome a API REST do FastAPI. O backend valida uploads, fragmenta documentos, persiste dados no SQLite e recupera o trecho mais relevante. Se uma chave OpenAI for configurada no ambiente do backend, ela pode gerar respostas a partir do contexto recuperado.
+O marketplace residencial e o protótipo TypeScript anteriores foram mantidos no repositório, mas não fazem parte da entrada da aplicação Servix. A stack não foi substituída nem foram adicionadas dependências ao `package.json` da raiz.
+
+## Configuração do backend
+
+Copie `backend/.env.example` para `backend/.env` e configure conforme necessário:
+
+| Variável | Padrão | Uso |
+| --- | --- | --- |
+| `DATABASE_URL` | `sqlite:///./astradesk.db` | Banco SQLAlchemy local |
+| `OPENAI_API_KEY` | vazio | Ativa respostas geradas por IA |
+| `OPENAI_MODEL` | `gpt-4o-mini` | Modelo para respostas |
+| `MAX_UPLOAD_MB` | `5` | Limite dos uploads |
+| `CORS_ORIGINS` | `http://localhost:5173` | Origens permitidas |
+
+Mantenha chaves de API somente no ambiente do backend; não as inclua no bundle do navegador.
 
 ## Licença
 

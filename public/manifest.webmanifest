@@ -1,0 +1,12 @@
+{
+  "name": "Servix — Serviços. Conexões. Confiança.",
+  "short_name": "Servix",
+  "description": "Atendimento, clientes e conhecimento em um só lugar.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080910",
+  "theme_color": "#080910",
+  "icons": [{ "src": "/brand/servix-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

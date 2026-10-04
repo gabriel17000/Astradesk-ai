@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="1800 110 240 240">
+  <defs><clipPath id="tile"><rect x="1800" y="110" width="240" height="240" rx="46"/></clipPath></defs>
+  <image href="/brand/servix-brand-guide.png" x="0" y="0" width="2172" height="724" clip-path="url(#tile)" preserveAspectRatio="none"/>
+</svg>
