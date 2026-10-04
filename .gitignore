@@ -30,3 +30,6 @@ coverage/
 Thumbs.db
 .idea/
 .vscode/
+
+# Separate local checkout of AstraDesk AI
+/astradesk-ai/

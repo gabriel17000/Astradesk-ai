@@ -1,20 +1,70 @@
-# AstraDesk AI
+# AstraDesk
 
-> Transforme documentos em respostas rastreáveis, de forma simples e local.
+Este repositório contém duas aplicações independentes chamadas AstraDesk:
 
-AstraDesk AI é uma aplicação full-stack para organizar arquivos de texto e fazer perguntas sobre seu conteúdo. Cada resposta informa a fonte utilizada, facilitando a verificação da informação. A V1 foi desenhada para ser objetiva, demonstrável e fácil de evoluir: usa busca lexical no SQLite e pode habilitar IA generativa de forma opcional.
+- **Marketplace de serviços** na raiz: protótipo frontend para encontrar profissionais, solicitar serviços e acompanhar atendimentos.
+- **AstraDesk AI** em `frontend/` e `backend/`: aplicação full-stack para consultar documentos com respostas rastreáveis.
 
-## Funcionalidades principais
+As aplicações têm dependências, comandos de execução e escopos separados.
+
+## Marketplace AstraDesk
+
+Protótipo navegável de um marketplace de serviços residenciais. Usa dados fictícios e estado local no navegador; não possui backend, autenticação ou pagamentos reais.
+
+### Executar
+
+Requisitos: Node.js 18 ou superior.
+
+```bash
+npm install
+npm run dev
+```
+
+Para gerar e pré-visualizar a versão de produção:
+
+```bash
+npm run build
+npm run preview
+```
+
+### Fluxos da demonstração
+
+- Buscar serviços por texto, categoria, faixa de preço e avaliação mínima; ordenar resultados.
+- Consultar profissionais, especialidades, disponibilidade, avaliações e serviços oferecidos.
+- Escolher um horário disponível, revisar os dados e enviar uma solicitação.
+- Acompanhar pedidos solicitados, aceitos, agendados, em andamento e concluídos.
+- Conversar com o profissional e receber uma resposta automática simulada.
+- Avaliar serviços concluídos e editar o perfil local do cliente.
+
+Pedidos, mensagens, notificações, avaliações e perfil são guardados no `localStorage`. Para reiniciar a demonstração, remova a chave `astradesk-demo-v1` do armazenamento local do site.
+
+O avanço de status e as respostas do chat são simulações para apresentação. Perfis, avaliações, disponibilidade e selos são dados ilustrativos; nenhum serviço, identidade ou pagamento é verificado ou processado de verdade.
+
+### Estrutura do marketplace
+
+```text
+src/
+├── components/   # Shell e componentes compartilhados da interface
+├── context/      # Estado local e ações mockadas do produto
+├── data/         # Profissionais, serviços e pedidos fictícios
+├── layouts/      # Layout principal da aplicação
+└── pages/        # Busca, profissionais, pedidos, chat e perfil
+```
+
+## AstraDesk AI
+
+Aplicação full-stack para organizar arquivos de texto e fazer perguntas sobre seu conteúdo. As respostas informam as fontes utilizadas. A busca lexical usa SQLite e a geração de respostas com IA é opcional.
+
+### Funcionalidades
 
 - Dashboard com visão de documentos, perguntas e atividade recente.
 - Upload e exclusão de arquivos `.txt` e `.md`, com limite padrão de 5 MB.
-- Processamento em trechos com sobreposição para recuperar conteúdo relevante.
+- Processamento de documentos em trechos com sobreposição para recuperar conteúdo relevante.
 - Chat com histórico de sessão e referência ao documento-fonte.
-- Modo demonstração funcional sem chave de IA.
-- Histórico das últimas 50 perguntas persistido no SQLite.
+- Modo demonstração sem chave de IA e histórico das últimas 50 perguntas em SQLite.
 - Interface responsiva em português.
 
-## Tecnologias
+### Tecnologias
 
 | Camada | Tecnologias |
 | --- | --- |
@@ -23,28 +73,11 @@ AstraDesk AI é uma aplicação full-stack para organizar arquivos de texto e fa
 | Dados | SQLite |
 | IA opcional | API OpenAI via variável de ambiente |
 
-## Arquitetura
+### Executar localmente
 
-```text
-React + TypeScript
-        ↓ HTTP/JSON
-FastAPI + Pydantic
-        ↓
-Serviços: documentos, recuperação lexical e IA opcional
-        ↓                              ↓
-SQLite                         Provedor de IA
-```
+Requisitos: Python 3.12 ou superior e Node.js 18 ou superior.
 
-O serviço de recuperação é independente, mantendo a V1 simples e criando um ponto claro para uma futura camada de embeddings e busca semântica.
-
-## Como executar localmente
-
-### Pré-requisitos
-
-- Python 3.12 ou superior
-- Node.js 18 ou superior
-
-### Backend
+Backend, em um terminal:
 
 ```bash
 cd backend
@@ -56,11 +89,9 @@ copy .env.example .env   # macOS/Linux: cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-O backend estará em `http://localhost:8000` e a documentação interativa em `http://localhost:8000/docs`. Sem `OPENAI_API_KEY`, a aplicação inicia em modo demonstração.
+A API estará em `http://localhost:8000` e a documentação interativa em `http://localhost:8000/docs`. Sem `OPENAI_API_KEY`, inicia em modo demonstração.
 
-### Frontend
-
-Em outro terminal:
+Frontend, em outro terminal:
 
 ```bash
 cd frontend
@@ -70,18 +101,16 @@ npm run dev
 
 Abra `http://localhost:5173`. Por padrão, o cliente usa `http://localhost:8000/api`. Para alterar essa URL, crie `frontend/.env.local` com `VITE_API_URL=http://localhost:8000/api`.
 
-### Testes
-
-Com o ambiente virtual do backend ativo:
+Para executar os testes do backend, com o ambiente virtual ativo:
 
 ```bash
 cd backend
 pytest
 ```
 
-## Variáveis de ambiente
+### Variáveis de ambiente
 
-Copie `backend/.env.example` para `backend/.env`. Arquivos `.env` não são versionados.
+Copie `backend/.env.example` para `backend/.env`. Arquivos de ambiente locais não são versionados.
 
 | Variável | Padrão | Finalidade |
 | --- | --- | --- |
@@ -91,44 +120,31 @@ Copie `backend/.env.example` para `backend/.env`. Arquivos `.env` não são vers
 | `MAX_UPLOAD_MB` | `5` | Tamanho máximo de upload |
 | `CORS_ORIGINS` | `http://localhost:5173` | Origens permitidas, separadas por vírgula |
 
-## Estrutura do projeto
+### Estrutura do AstraDesk AI
 
 ```text
-astradesk-ai/
-├── backend/
-│   ├── app/
-│   │   ├── models/       # Entidades e relacionamentos
-│   │   ├── routers/      # Endpoints REST
-│   │   ├── schemas/      # Contratos de API
-│   │   ├── services/     # Documentos, recuperação e IA
-│   │   ├── config.py     # Configuração por ambiente
-│   │   ├── database.py   # Conexão e sessão SQLAlchemy
-│   │   └── main.py       # Aplicação FastAPI
-│   ├── tests/            # Testes da API e processamento
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── services/     # Cliente HTTP
-│   │   ├── types/        # Tipos TypeScript
-│   │   ├── App.tsx       # Dashboard e assistente
-│   │   └── styles.css    # Identidade visual e responsividade
-│   └── package.json
-└── README.md
+backend/
+├── app/
+│   ├── models/       # Entidades e relacionamentos
+│   ├── routers/      # Endpoints REST
+│   ├── schemas/      # Contratos de API
+│   ├── services/     # Documentos, recuperação e IA
+│   ├── config.py
+│   ├── database.py
+│   └── main.py
+├── tests/
+└── requirements.txt
+frontend/
+├── src/
+│   ├── services/     # Cliente HTTP
+│   ├── types/        # Tipos da API
+│   ├── App.tsx
+│   └── styles.css
+└── package.json
 ```
 
-## Frontend e backend
-
-O frontend React consome a API REST do FastAPI. O backend valida uploads, fragmenta os documentos, persiste dados no SQLite e recupera o trecho mais relevante para cada pergunta. Quando uma chave OpenAI é configurada exclusivamente no ambiente do backend, ela pode gerar respostas a partir do contexto recuperado.
-
-## Próximos passos
-
-- Adicionar suporte a PDF e extração de texto.
-- Implementar embeddings e busca semântica.
-- Incluir autenticação e isolamento de documentos por usuário.
-- Migrar para PostgreSQL e adicionar migrações com Alembic.
-- Criar configuração Docker e pipeline de CI.
-- Preparar o deploy após a publicação no GitHub.
+O frontend React consome a API REST do FastAPI. O backend valida uploads, fragmenta documentos, persiste dados no SQLite e recupera o trecho mais relevante. Se uma chave OpenAI for configurada no ambiente do backend, ela pode gerar respostas a partir do contexto recuperado.
 
 ## Licença
 
-Distribuído sob a licença MIT. Consulte [LICENSE](LICENSE) para mais informações.
+Distribuído sob a licença MIT. Consulte [LICENSE](LICENSE).
